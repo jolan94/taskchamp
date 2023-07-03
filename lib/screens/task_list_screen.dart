@@ -18,17 +18,18 @@ class _TaskListState extends State<TaskList> {
         ? SizedBox(
             width: double.infinity,
             child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    'assets/empty.png',
-                    height: 200,
-                    width: 200,
-                  ),
-                  const SizedBox(height: 20),
-                  const Text("Add task here...!")
-                ]),
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/empty.png',
+                  height: 200,
+                  width: 200,
+                ),
+                const SizedBox(height: 20),
+                const Text("Add task here...!")
+              ],
+            ),
           )
         : ListView.builder(
             itemCount: widget.tasks.length,
@@ -66,8 +67,32 @@ class _TaskListState extends State<TaskList> {
                     IconButton(
                       icon: const Icon(Icons.delete),
                       onPressed: () {
-                        setState(() {
-                          widget.tasks.removeAt(index);
+                        showDialog(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Delete Task?'),
+                            content: const Text('Are you sure you want to delete this task?'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(false);
+                                },
+                                child: const Text('Cancel'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(true);
+                                },
+                                child: const Text('Delete'),
+                              ),
+                            ],
+                          ),
+                        ).then((confirmed) {
+                          if (confirmed) {
+                            setState(() {
+                              widget.tasks.removeAt(index);
+                            });
+                          }
                         });
                       },
                     ),
